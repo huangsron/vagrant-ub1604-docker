@@ -12,7 +12,8 @@ Vagrant.configure("2") do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://vagrantcloud.com/search.
-  config.vm.box = "bento/ubuntu-16.04"
+  config.vm.box = "hashicorp/bionic64"
+  config.vm.box_version = "1.0.282"
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -77,22 +78,22 @@ Vagrant.configure("2") do |config|
   # SHELL
 
   config.vm.provision "shell", inline: <<-SHELL
-    # sudo apt-get update && sudo apt-get -y upgrade
+    sudo apt-get update && sudo apt-get -y upgrade
 
     # chang password
     echo "vagrant:admin123@" | chpasswd
 
     # enabled ssh password
-    sed -i 's/.*PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/ssh_config
+    sudo sed -i 's/.*PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/ssh_config
 
-    systemctl restart sshd
+    sudo systemctl restart sshd
 
     # install docker
     sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
     sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
     sudo apt-get update
     sudo apt-cache policy docker-ce
-    sudo apt-get install -y docker-ce
+    sudo apt-get install -y docker-ce=5:18.09.9~3-0~ubuntu-bionic
     sudo usermod -aG docker vagrant
 
     # install docker-compose
